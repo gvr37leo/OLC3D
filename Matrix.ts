@@ -9,7 +9,7 @@ class Matrix{
         
 
 
-    }https://github.com/gvr37leo/OLC3D.git
+    }
 
     mxv(v:Vector){
         var x = v.x * this.vals[0][0] + v.y * this.vals[1][0] + v.z * this.vals[2][0] + this.vals[3][0]
