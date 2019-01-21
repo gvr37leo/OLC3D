@@ -1,14 +1,109 @@
 class Matrix{
-    vals:number[][]
+    
 
-    constructor(){
+    constructor(public vals:number[][]){
+
+    }
+
+    c(){
+
+    }
+
+    static translate(v:Vector){
+        return new Matrix([
+            [1,0,0,v.x],
+            [0,1,0,v.y],
+            [0,0,1,v.z],
+            [0,0,0,1],
+        ])
+    }
+    
+    static scale(v:Vector){
+        return new Matrix([
+            [v.x,0,0,0],
+            [0,v.y,0,0],
+            [0,0,v.z,0],
+            [0,0,0,1],
+        ])
+    }
+
+    static rotx(theta:number){
+        var cost = Math.cos(theta)
+        var sint = Math.sin(theta)
+        return new Matrix([
+            [1,0,0,0],
+            [0,cost,-sint,0],
+            [0,sint,cost,0],
+            [0,0,0,1],
+        ])
+    }
+
+    static roty(theta:number){
+        var cost = Math.cos(theta)
+        var sint = Math.sin(theta)
+        return new Matrix([
+            [cost,0,sint,0],
+            [0,1,0,0],
+            [-sint,0,cost,0],
+            [0,0,0,1],
+        ])
+    }
+
+    static rotz(theta:number){
+        var cost = Math.cos(theta)
+        var sint = Math.sin(theta)
+        return new Matrix([
+            [cost,-sint,0,0],
+            [sint,cost,0,0],
+            [0,0,1,0],
+            [0,0,0,1],
+        ])
+    }
+
+    static zero(){
+        return new Matrix([
+            [0,0,0,0],
+            [0,0,0,0],
+            [0,0,0,0],
+            [0,0,0,0],
+        ])
+    }
+
+    static identity(){
+        return new Matrix([
+            [1,0,0,0],
+            [0,1,0,0],
+            [0,0,1,0],
+            [0,0,0,1],
+        ])
+    }
+
+    static projection(){
+
+    }
+
+    static lookAt(pos:Vector,target:Vector,up:Vector){
+        var forward = pos.to(target).normalize()
+        var up:Vector
+        var right = up.cross(forward)
+        return new Matrix([
+            [right.x,   right.y,    right.z,    0],
+            [up.x,      up.y,       up.z,       0],
+            [forward.x, forward.y,  forward.z,  0],
+            [pos.x,     pos.y,      pos.z,      1],
+        ])
+    }
+
+    inverse(){
 
     }
 
     mxm(m:Matrix){
-        
-
-
+        var matrix = Matrix.zero();
+		for (var c = 0; c < 4; c++)
+			for (var r = 0; r < 4; r++)
+				matrix.vals[r][c] = this.vals[r][0] * this.vals[0][c] + this.vals[r][1] * m.vals[1][c] + this.vals[r][2] * m.vals[2][c] + this.vals[r][3] * m.vals[3][c];
+		return matrix;
     }
 
     mxv(v:Vector){

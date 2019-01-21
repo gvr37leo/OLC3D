@@ -1,19 +1,31 @@
 
 class Pipeline{
     depthbuffer:number[][]
+    camera:Vector = new Vector(0,0,0)
 
     draw(mesh:Mesh){
 
         for(var i = 0; i < mesh.faces.length; i++){
-            var face = mesh.faces[i]
+            var face:Face = mesh.faces[i]
             
-            var a = this.screentransform(face.indices[0].toArray(mesh))
-            var b = this.screentransform(face.indices[1].toArray(mesh))
-            var c = this.screentransform(face.indices[2].toArray(mesh))
-            // var normal = a.getPos().to(b.getPos()).cross(a.getPos().to(c.getPos())).normalize()
-            this.triangle(a,b,c,mesh,v => {
-                mesh.shader.process(v,i,normal)
-            })
+
+            var a = face.vertices[0]
+            var b = face.vertices[1]
+            var c = face.vertices[2]
+
+            var ascr = this.screentransform(a.toArray(mesh))
+            var bscr = this.screentransform(b.toArray(mesh))
+            var cscr = this.screentransform(c.toArray(mesh))
+
+            var a2b = a.pos(mesh).to(b.pos(mesh))
+            var a2c = a.pos(mesh).to(c.pos(mesh))
+            var normal = a2b.cross(a2c).normalize();
+            var cameraRay = this.camera.to(a.pos(mesh))
+            if(normal.dot(cameraRay) < 0){
+                this.triangle(ascr,bscr,cscr,mesh,v => {
+                    mesh.shader.process(v,i,normal)
+                })
+            }
 
         }
     }

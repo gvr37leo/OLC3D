@@ -73,7 +73,7 @@ class Mesh{
 class Face{
     
 
-    constructor(public indices:Vertex[]){
+    constructor(public vertices:Vertex[]){
 
     }
 }
@@ -85,6 +85,10 @@ class Vertex{
         public uv:number,
         public normal:number){
 
+    }
+
+    pos(mesh:Mesh):Vector{
+        return mesh.vertices[this.position]
     }
 
     toArray(mesh:Mesh){
