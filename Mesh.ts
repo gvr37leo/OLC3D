@@ -5,27 +5,28 @@ class Mesh{
     vertices:Vector[] = []
     normals:Vector[] = []
     uvs:Vector[] = []
-    shader:Shader
 
     static triangle():Mesh{
         var tri = new Mesh()
         tri.vertices = [
-            new Vector(-1,0),
-            new Vector(0,1),
-            new Vector(1,-1),
+            new Vector(-1,0.8,0),
+            new Vector(1,1,0),
+            new Vector(-1,-1,0),
         ]
         tri.faces = [
             new Face([
                 new Vertex(0,0,0),
-                new Vertex(1,0,0),
-                new Vertex(2,0,0),
+                new Vertex(1,1,0),
+                new Vertex(2,2,0),
             ])
         ]
         tri.normals = [
             new Vector(0,0,-1)
         ]
         tri.uvs = [
-            new Vector(0,0)
+            new Vector(0,0),
+            new Vector(1,0),
+            new Vector(0,1),
         ]
         tri.calcNormals()
 

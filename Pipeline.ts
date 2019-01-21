@@ -2,6 +2,7 @@
 class Pipeline{
     depthbuffer:number[][]
     camera:Vector = new Vector(0,0,0)
+    shader:Shader
 
     draw(mesh:Mesh){
 
@@ -23,7 +24,7 @@ class Pipeline{
             var cameraRay = this.camera.to(a.pos(mesh))
             if(normal.dot(cameraRay) < 0){
                 this.triangle(ascr,bscr,cscr,mesh,v => {
-                    mesh.shader.process(v,i,normal)
+                    this.shader.process(v,i,normal)
                 })
             }
 
