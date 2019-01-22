@@ -20,7 +20,7 @@ async function start(){
     var pipeline = new Pipeline()
     var mesh = Mesh.quad()
     var mattrans = Matrix.translate(new Vector(0,0,1))
-    mesh.vertices.forEach(v => v.add(new Vector(0,0,1)))
+    mesh.vertices.forEach(mattrans.mxv.bind(mattrans))
 
     var light = null
 
