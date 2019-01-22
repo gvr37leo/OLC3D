@@ -9,7 +9,7 @@ class Mesh{
     static triangle():Mesh{
         var tri = new Mesh()
         tri.vertices = [
-            new Vector(-1,0.8,0),
+            new Vector(-1,1,0),
             new Vector(1,1,0),
             new Vector(-1,-1,0),
         ]
@@ -36,10 +36,10 @@ class Mesh{
     static quad():Mesh{
         var quad = new Mesh()
         quad.vertices = [
-            new Vector(-1,1),
-            new Vector(1,1),
-            new Vector(1,-1),
-            new Vector(-1,-1),
+            new Vector(-1,1,0),
+            new Vector(1,1,0),
+            new Vector(1,-1,0),
+            new Vector(-1,-1,0),
         ]
         quad.uvs = [
             new Vector(0,0),

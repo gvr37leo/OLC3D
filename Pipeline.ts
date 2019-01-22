@@ -73,19 +73,20 @@ class Pipeline{
         var righttemp:number[] = new Array(tl.length)
         var hortemp:number[] = new Array(tl.length)
 
-        var distToPixelCenter = to(tl[1], (Math.ceil(tl[1] - 0.5) + 0.5))
+        var distToPixelCenterY = to(tl[1], (Math.ceil(tl[1] - 0.5) + 0.5))
 
-        for(var y = tl[1] + distToPixelCenter; y < bl[1]; y++){
+        for(var y = tl[1] + distToPixelCenterY; y < bl[1]; y++){
             var ratioy = Pipeline.inverselerp(tl[1],bl[1],y)
             Pipeline.maplerp(tl,bl,lefttemp,ratioy)
             Pipeline.maplerp(tr,br,righttemp,ratioy)
             lefttemp[1] = Math.floor(lefttemp[1])
             righttemp[1] = Math.floor(righttemp[1])
 
-            for(var x = lefttemp[0]; x < righttemp[0]; x++){
+            var distToPixelCenterX = to(lefttemp[0], (Math.ceil(lefttemp[0] - 0.5) + 0.5))
+            for(var x = lefttemp[0] + distToPixelCenterX; x < righttemp[0]; x++){
                 var ratiox = Pipeline.inverselerp(lefttemp[0], righttemp[0], x)
                 Pipeline.maplerp(lefttemp,righttemp,hortemp,ratiox)
-                hortemp[0] = Math.round(hortemp[0])
+                hortemp[0] = Math.floor(hortemp[0])
                 cb(hortemp)
             }
         }
