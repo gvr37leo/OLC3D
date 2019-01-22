@@ -78,8 +78,16 @@ class Matrix{
         ])
     }
 
-    static projection(){
-
+    static projection(width:number,height:number,fov:number,zFar:number,zNear:number){
+        var a = height / width
+        var f = 1 / Math.tan(fov / 2)
+        var q = zFar / (zFar - zNear)
+        return new Matrix([
+            [a*f,0,0,0],
+            [0,f,0,0],
+            [0,0,q,-zNear * q],
+            [0,0,1,0],
+        ])
     }
 
     static lookAt(pos:Vector,target:Vector,up:Vector){

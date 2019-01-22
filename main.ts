@@ -18,7 +18,7 @@ async function start(){
     var ctxt = crret.ctxt
     var gfx = new Graphics(ctxt)
     var pipeline = new Pipeline()
-    var mesh = Mesh.quad()
+    var mesh = Mesh.cube()
     var mattrans = Matrix.translate(new Vector(0,0,1))
     mesh.vertices.forEach(mattrans.mxv.bind(mattrans))
 
