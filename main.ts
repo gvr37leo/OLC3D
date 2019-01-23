@@ -7,20 +7,19 @@
 /// <reference path="node_modules/graphicsx/graphics.ts" />
 /// <reference path="utils.ts" />
 /// <reference path="Image.ts" />
-
+var sz = new Vector(800,400)
 
 async function start(){
 
     // var image = await Sprite.fromString("img/uvtest.png")
     var image = await Sprite.fromString("img/house.png")
-    var crret = createCanvas(800,400)
+    var crret = createCanvas(sz.x,sz.y)
     var canvas = crret.canvas
     var ctxt = crret.ctxt
     var gfx = new Graphics(ctxt)
     var pipeline = new Pipeline()
     var mesh = Mesh.cube()
-    var mattrans = Matrix.translate(new Vector(0,0,1))
-    mesh.vertices.forEach(mattrans.mxv.bind(mattrans))
+    
 
     var light = null
 
@@ -32,7 +31,7 @@ async function start(){
     })
 
     // loop((dt) => {
-        ctxt.clearRect(0,0,500,500)
+        ctxt.clearRect(0,0,sz.x,sz.y)
         gfx.load()
         pipeline.draw(mesh)
         gfx.flush()

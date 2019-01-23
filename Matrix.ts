@@ -103,7 +103,17 @@ class Matrix{
     }
 
     inverse(){
-
+        var a = new Vector(this.vals[0][0],this.vals[0][0],this.vals[0][0]);
+        var b = new Vector(this.vals[0][0],this.vals[0][0],this.vals[0][0]);
+        var c = new Vector(this.vals[0][0],this.vals[0][0],this.vals[0][0]);
+        var t = new Vector(this.vals[0][0],this.vals[0][0],this.vals[0][0]);
+        var newmatrix = [
+            [a.x    ,a.y    ,a.z    ,-t.dot(a)  ],
+            [b.x    ,b.y    ,b.z    ,-t.dot(b)  ],
+            [c.x    ,c.y    ,c.z    ,-t.dot(c)  ],
+            [0      ,0      ,0      ,1          ],
+        ]
+        this.vals = newmatrix
     }
 
     mxm(m:Matrix){
@@ -117,15 +127,24 @@ class Matrix{
 
     //matrix bottomleft
     //vector vertical topright
-    mxv(v:Vector){
+    mxv(v:Vector):number{
         var x = v.x * this.vals[0][0] + v.y * this.vals[0][1] + v.z * this.vals[0][2] + this.vals[0][3]
         var y = v.x * this.vals[1][0] + v.y * this.vals[1][1] + v.z * this.vals[1][2] + this.vals[1][3]
         var z = v.x * this.vals[2][0] + v.y * this.vals[2][1] + v.z * this.vals[2][2] + this.vals[2][3]
         var w = v.x * this.vals[3][0] + v.y * this.vals[3][1] + v.z * this.vals[3][2] + this.vals[3][3]
         v.x = x; v.y = y; v.z = z;
+        return w
         // if(w != 0){
         //     v.scale(1/w)
         // }
+    }
+
+    static pipeMatrices(matrices:Matrix[]):Matrix{
+        var result = Matrix.identity();
+        for(var matrix of matrices){
+            result = result.mxm(matrix)
+        }
+        return result
     }
 
 }

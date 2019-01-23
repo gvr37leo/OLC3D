@@ -6,6 +6,34 @@ class Mesh{
     normals:Vector[] = []
     uvs:Vector[] = []
 
+    constructor(){
+
+    }
+
+    static loadObj(filePath:string):Mesh{
+        var file:string
+        var mesh = new Mesh()
+        var lines = file.split('\n')
+        for(var line of lines){
+            var splittedLine = line.split(' ')
+            var type = splittedLine[0]
+            if(type == 'v'){
+                mesh.vertices.push(new Vector(0,0,0))
+            }else if(type == 'f'){
+                mesh.faces.push(new Face([
+                    new Vertex(0,0,0),
+                    new Vertex(0,0,0),
+                    new Vertex(0,0,0),
+                ]))
+            }else if(type == 'vt'){ 
+                mesh.uvs.push(new Vector(0,0))
+            }else if(type == 'n'){
+                mesh.normals.push(new Vector(0,0,0))
+            }
+        }
+        return mesh
+    }
+
     static triangle():Mesh{
         var tri = new Mesh()
         tri.vertices = [

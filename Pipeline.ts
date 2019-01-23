@@ -1,7 +1,9 @@
 
 class Pipeline{
     depthbuffer:number[][]
-    camera:Vector = new Vector(0,0,0)
+    cameraPos:Vector = new Vector(0,0,0)
+    cameraDir:Vector = new Vector(0,0,1)
+    cameraUp:Vector = new Vector(0,1,0)
     shader:Shader
 
     draw(mesh:Mesh){
@@ -9,7 +11,28 @@ class Pipeline{
         for(var i = 0; i < mesh.faces.length; i++){
             var face:Face = mesh.faces[i]
             
+            
+            
+            
+            var positions = [a.pos(mesh),b.pos(mesh),c.pos(mesh)]
+            var mattrans = Matrix.translate(new Vector(0,0,1))
+            var matrotx = Matrix.rotx(0)
+            var matroty = Matrix.roty(0)
+            var worldMat = Matrix.pipeMatrices([mattrans,matrotx,matroty])
 
+
+            var cameraMat = Matrix.lookAt(this.cameraPos,this.cameraPos.c().add(this.cameraDir),this.cameraUp)
+            cameraMat.inverse()
+
+            var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
+            mesh.vertices.forEach(worldMat.mxv.bind(mattrans))
+
+            
+            
+            
+            
+            
+            
             var a = face.vertices[0]
             var b = face.vertices[1]
             var c = face.vertices[2]
@@ -21,7 +44,7 @@ class Pipeline{
             var a2b = a.pos(mesh).to(b.pos(mesh))
             var a2c = a.pos(mesh).to(c.pos(mesh))
             var normal = a2b.cross(a2c).normalize();
-            var cameraRay = this.camera.to(a.pos(mesh))
+            var cameraRay = this.cameraPos.to(a.pos(mesh))
             if(normal.dot(cameraRay) < 0){
                 this.triangle(ascr,bscr,cscr,mesh,v => {
                     this.shader.process(v,i,normal)
