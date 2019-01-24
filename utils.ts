@@ -204,3 +204,51 @@ function swap<T>(arr:T[],a:number = 0,b:number = 1){
 function sortby<T>(arr:T[],picker:(obj:T) => number){
     arr.sort((a,b) => picker(a) - picker(b))
 }
+
+class Debouncer{
+    
+    id:number
+    fresh:boolean = true
+    leading:() => void
+    trailing:() => void
+
+    constructor(public time:number, public enableLeading:boolean, public enableTrailing:boolean, public cb:(leading:boolean) => void){
+        this.leading = () => {
+            if(this.enableLeading){
+                cb(true)
+            }
+        }
+        this.trailing = () => {
+            if(this.enableTrailing){
+                cb(false)
+            }
+        }
+    }
+
+    call(){
+        if(this.fresh){
+            this.fresh = false
+            this.start()
+            this.leading()
+        }else{
+            this.reset()
+        }
+    }
+
+    private start(){
+        this.id = setTimeout(() => {
+            this.fresh = true
+            this.trailing()
+        },this.time)
+    }
+
+    reset(){
+        clearTimeout(this.id)
+        this.start()
+    }
+
+    cancel(){
+        this.fresh = true
+        clearTimeout(this.id)
+    }
+}
