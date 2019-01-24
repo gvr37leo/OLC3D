@@ -116,11 +116,12 @@ class Matrix{
         this.vals = newmatrix
     }
 
+    
     mxm(m:Matrix){
         var matrix = Matrix.zero();
 		for (var c = 0; c < 4; c++)
 			for (var r = 0; r < 4; r++)
-				matrix.vals[r][c] = this.vals[r][0] * this.vals[0][c] + this.vals[r][1] * m.vals[1][c] + this.vals[r][2] * m.vals[2][c] + this.vals[r][3] * m.vals[3][c];
+				matrix.vals[r][c] = this.vals[r][0] * m.vals[0][c] + this.vals[r][1] * m.vals[1][c] + this.vals[r][2] * m.vals[2][c] + this.vals[r][3] * m.vals[3][c];
 		return matrix;
     }
 
@@ -139,12 +140,26 @@ class Matrix{
         // }
     }
 
+
     static pipeMatrices(matrices:Matrix[]):Matrix{
+        var locmatrices = matrices.slice().reverse()
         var result = Matrix.identity();
-        for(var matrix of matrices){
+        for(var matrix of locmatrices){
             result = result.mxm(matrix)
         }
+        result.cleanZeros()
         return result
     }
 
+    cleanZeros(){
+        for (var c = 0; c < 4; c++)
+            for (var r = 0; r < 4; r++)
+                this.vals[r][c] = round(this.vals[r][c],2)
+    }
+
+}
+
+function round(val,decimalplaces):number{
+    var pow = Math.pow(10,decimalplaces)
+    return Math.round(val * pow) / pow;
 }

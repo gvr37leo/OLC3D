@@ -9,13 +9,13 @@
 /// <reference path="Image.ts" />
 var sz = new Vector(800,400)
 
-var positions = [new Vector(-1,-1,5),new Vector(0,1,5),new Vector(1,-1,5)]
+var positions = [new Vector(1,0,0)]
 var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
 var rotz = Matrix.rotz(Math.PI / 2)
-var transmat = Matrix.translate(new Vector(3,0,0))
-var finalMat = Matrix.pipeMatrices([transmat])
+var transmat = Matrix.translate(new Vector(5,0,0))
+var finalMat = Matrix.pipeMatrices([transmat,rotz])
 positions.forEach(finalMat.mxv.bind(finalMat))
-
+var x = 0;
 
 async function start(){
 
