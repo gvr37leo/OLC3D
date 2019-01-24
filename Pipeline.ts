@@ -25,7 +25,7 @@ class Pipeline{
             cameraMat.inverse()
 
             var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
-            mesh.vertices.forEach(worldMat.mxv.bind(mattrans))
+            mesh.vertices.forEach(worldMat.mxv.bind(worldMat))
 
             
             
