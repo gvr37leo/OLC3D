@@ -1,3 +1,5 @@
+declare var math;
+
 class Matrix{
     
 
@@ -92,11 +94,11 @@ class Matrix{
 
     static lookAt(pos:Vector,target:Vector,up:Vector){
         var forward = pos.to(target).normalize()
-        var up:Vector
-        var right = up.cross(forward)
+        var newup:Vector
+        var right = newup.cross(forward)
         return new Matrix([
             [right.x,   right.y,    right.z,    0],
-            [up.x,      up.y,       up.z,       0],
+            [newup.x,   newup.y,    newup.z,    0],
             [forward.x, forward.y,  forward.z,  0],
             [pos.x,     pos.y,      pos.z,      1],
         ])
@@ -114,6 +116,13 @@ class Matrix{
             [0      ,0      ,0      ,1          ],
         ]
         this.vals = newmatrix
+        return this
+    }
+
+    mathInverse(){
+        var result = Matrix.zero()
+        result.vals = math.inv(this.vals)
+        return result
     }
 
     
@@ -155,6 +164,7 @@ class Matrix{
         for (var c = 0; c < 4; c++)
             for (var r = 0; r < 4; r++)
                 this.vals[r][c] = round(this.vals[r][c],2)
+        return this
     }
 
 }

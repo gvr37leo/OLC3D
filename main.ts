@@ -9,11 +9,18 @@
 /// <reference path="Image.ts" />
 var sz = new Vector(800,400)
 
-var positions = [new Vector(1,0,0)]
-var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
-var rotz = Matrix.rotz(Math.PI / 2)
+var positions = [new Vector(1,1,4)]
+
+var rotz = Matrix.rotz(2).cleanZeros()
 var transmat = Matrix.translate(new Vector(5,0,0))
-var finalMat = Matrix.pipeMatrices([transmat,rotz])
+var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
+// var cameraMat = Matrix.lookAt(new Vector(1,0,0),new Vector(1,0,1),new Vector(0,1,0))
+// cameraMat.inverse().cleanZeros()
+
+var transinv = rotz.mathInverse()
+var iden = transinv.mxm(rotz)
+
+var finalMat = Matrix.pipeMatrices([projectionMat])
 positions.forEach(finalMat.mxv.bind(finalMat))
 var x = 0;
 
