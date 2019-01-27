@@ -12,15 +12,17 @@ var sz = new Vector(800,400)
 var positions = [new Vector(1,1,4)]
 
 var rotz = Matrix.rotz(2).cleanZeros()
+var roty = Matrix.roty(Math.PI / 4).cleanZeros()
+var rotyinv = roty.mathInverse()
 var transmat = Matrix.translate(new Vector(5,0,0))
-var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
-// var cameraMat = Matrix.lookAt(new Vector(1,0,0),new Vector(1,0,1),new Vector(0,1,0))
-// cameraMat.inverse().cleanZeros()
+// var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
+var cameraMat = Matrix.lookAt(new Vector(0,0,0),new Vector(1,0,1).normalize(),new Vector(0,1,0))
+cameraMat = cameraMat.mathInverse().cleanZeros()
 
 var transinv = rotz.mathInverse()
 var iden = transinv.mxm(rotz)
 
-var finalMat = Matrix.pipeMatrices([projectionMat])
+var finalMat = Matrix.pipeMatrices([cameraMat])
 positions.forEach(finalMat.mxv.bind(finalMat))
 var x = 0;
 

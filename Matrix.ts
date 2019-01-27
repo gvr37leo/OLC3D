@@ -94,13 +94,14 @@ class Matrix{
 
     static lookAt(pos:Vector,target:Vector,up:Vector){
         var forward = pos.to(target).normalize()
-        var newup:Vector
-        var right = newup.cross(forward)
+        var right = up.cross(forward)
+        var newup = forward.cross(right)
+        
         return new Matrix([
-            [right.x,   right.y,    right.z,    0],
-            [newup.x,   newup.y,    newup.z,    0],
-            [forward.x, forward.y,  forward.z,  0],
-            [pos.x,     pos.y,      pos.z,      1],
+            [right.x,   newup.x,    forward.x,      pos.x],
+            [right.y,   newup.y,    forward.y,      pos.y],
+            [right.z,   newup.z,    forward.z,      pos.z],
+            [0      ,   0      ,    0        ,      1   ],
         ])
     }
 
