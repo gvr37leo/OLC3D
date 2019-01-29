@@ -4,6 +4,8 @@ class Pipeline{
     cameraPos:Vector = new Vector(0,0,0)
     cameraDir:Vector = new Vector(0,0,1)
     cameraUp:Vector = new Vector(0,1,0)
+    worldMatrix:Matrix
+    cameraMatrix:Matrix
     shader:Shader
 
     draw(mesh:Mesh){
@@ -14,18 +16,18 @@ class Pipeline{
             
             
             
-            var positions = [a.pos(mesh),b.pos(mesh),c.pos(mesh)]
             var mattrans = Matrix.translate(new Vector(0,0,1))
             var matrotx = Matrix.rotx(0)
             var matroty = Matrix.roty(0)
-            var worldMat = Matrix.pipeMatrices([mattrans,matrotx,matroty])
+            var matrotz = Matrix.rotz(0)
+            var matScale = Matrix.scale(new Vector(0,0,0))
+            this.worldMatrix = Matrix.pipeMatrices([matrotx,matroty,matrotz,matScale,mattrans])
+            this.cameraMatrix = Matrix.lookAt(this.cameraPos,this.cameraPos.c().add(this.cameraDir),this.cameraUp)
+            this.cameraMatrix.inverse()
 
-
-            var cameraMat = Matrix.lookAt(this.cameraPos,this.cameraPos.c().add(this.cameraDir),this.cameraUp)
-            cameraMat.inverse()
-
-            var projectionMat = Matrix.projection(sz.x,sz.y,Math.PI,1000,0.1)
-            mesh.vertices.forEach(worldMat.mxv.bind(worldMat))
+            
+            mesh.vertices.forEach(this.worldMatrix.mxv.bind(this.worldMatrix))
+            mesh.vertices.forEach(this.cameraMatrix.mxv.bind(this.cameraMatrix))
 
             
             
@@ -37,6 +39,9 @@ class Pipeline{
             var b = face.vertices[1]
             var c = face.vertices[2]
 
+
+            //divide x,y,u,v by z
+            //prop t from 0 to 1 to tell hwo far along perspective line you are
             var ascr = this.screentransform(a.toArray(mesh))
             var bscr = this.screentransform(b.toArray(mesh))
             var cscr = this.screentransform(c.toArray(mesh))
@@ -85,6 +90,7 @@ class Pipeline{
             middleRight = temp
         }
 
+
         this.walk(top,top,middleLeft,middleRight,mesh,cb)
         this.walk(middleLeft,middleRight,bot,bot,mesh,cb)
 
@@ -96,18 +102,21 @@ class Pipeline{
         var righttemp:number[] = new Array(tl.length)
         var hortemp:number[] = new Array(tl.length)
 
+        //crop y and then z coordinates of tl and bl
         var distToPixelCenterY = to(tl[1], (Math.ceil(tl[1] - 0.5) + 0.5))
+        
 
         for(var y = tl[1] + distToPixelCenterY; y < bl[1]; y++){
-            var ratioy = Pipeline.inverselerp(tl[1],bl[1],y)
+            var ratioy = inverselerp(tl[1],bl[1],y)
             Pipeline.maplerp(tl,bl,lefttemp,ratioy)
             Pipeline.maplerp(tr,br,righttemp,ratioy)
             lefttemp[1] = Math.floor(lefttemp[1])
             righttemp[1] = Math.floor(righttemp[1])
 
+            //crop x and then z coordinates of lefttemp and righttemp
             var distToPixelCenterX = to(lefttemp[0], (Math.ceil(lefttemp[0] - 0.5) + 0.5))
             for(var x = lefttemp[0] + distToPixelCenterX; x < righttemp[0]; x++){
-                var ratiox = Pipeline.inverselerp(lefttemp[0], righttemp[0], x)
+                var ratiox = inverselerp(lefttemp[0], righttemp[0], x)
                 Pipeline.maplerp(lefttemp,righttemp,hortemp,ratiox)
                 hortemp[0] = Math.floor(hortemp[0])
                 cb(hortemp)
@@ -115,7 +124,7 @@ class Pipeline{
         }
     }
     static maplerp(from:number[],to:number[],buffer:number[],t:number){
-        this.map(from,buffer,(v,i) => this.lerp(v,to[i],t))
+        this.map(from,buffer,(v,i) => lerp(v,to[i],t))
     }
 
     static map<T,U>(arr:T[],buffer:U[],cb:(val:T,i:number) => U):U[]{
@@ -125,15 +134,5 @@ class Pipeline{
         return buffer
     }
 
-    static inverselerp(a:number,b:number,v:number){
-        return (v - a) / (b - a)
-    }
-
-    static lerp(a:number,b:number,t:number){
-        return a + (b - a) * t
-    }
-
-    static remap(r1a:number,r1b:number,r2a:number,r2b:number,v:number){
-        this.lerp(r2a,r2b,this.inverselerp(r1a,r1b,v))
-    }
+    
 }

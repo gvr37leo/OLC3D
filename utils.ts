@@ -191,6 +191,14 @@ function lerp(a:number,b:number,r:number):number{
     return a + to(a,b) * r
 }
 
+function inverselerp(a:number,b:number,v:number){
+    return (v - a) / (b - a)
+}
+
+function remap(r1a:number,r1b:number,r2a:number,r2b:number,v:number){
+    lerp(r2a,r2b,inverselerp(r1a,r1b,v))
+}
+
 function to(a:number,b:number):number{
     return b - a;
 }
@@ -252,3 +260,4 @@ class Debouncer{
         clearTimeout(this.id)
     }
 }
+
