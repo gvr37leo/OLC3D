@@ -8,40 +8,30 @@ class Pipeline{
     cameraMatrix:Matrix
     shader:Shader
 
+    constructor(public sz:Vector){
+        this.depthbuffer = createNDimArray([sz.y,sz.x],p => 0)
+    }
+
     draw(mesh:Mesh){
+
+        var mattrans = Matrix.translate(new Vector(0,0,3))
+        var matrotx = Matrix.rotx(1.3)
+        var matroty = Matrix.roty(0)
+        var matrotz = Matrix.rotz(0)
+        var matScale = Matrix.scale(new Vector(1,1,1))
+        this.worldMatrix = Matrix.pipeMatrices([matrotx,matroty,matrotz,matScale,mattrans])
+        this.cameraMatrix = Matrix.lookAt(this.cameraPos,this.cameraPos.c().add(this.cameraDir),this.cameraUp)
+        this.cameraMatrix.mathInverse()
+        mesh.vertices.forEach(this.worldMatrix.mxv.bind(this.worldMatrix))
+        mesh.vertices.forEach(this.cameraMatrix.mxv.bind(this.cameraMatrix))
 
         for(var i = 0; i < mesh.faces.length; i++){
             var face:Face = mesh.faces[i]
-            
-            
-            
-            
-            var mattrans = Matrix.translate(new Vector(0,0,1))
-            var matrotx = Matrix.rotx(0)
-            var matroty = Matrix.roty(0)
-            var matrotz = Matrix.rotz(0)
-            var matScale = Matrix.scale(new Vector(0,0,0))
-            this.worldMatrix = Matrix.pipeMatrices([matrotx,matroty,matrotz,matScale,mattrans])
-            this.cameraMatrix = Matrix.lookAt(this.cameraPos,this.cameraPos.c().add(this.cameraDir),this.cameraUp)
-            this.cameraMatrix.inverse()
-
-            
-            mesh.vertices.forEach(this.worldMatrix.mxv.bind(this.worldMatrix))
-            mesh.vertices.forEach(this.cameraMatrix.mxv.bind(this.cameraMatrix))
-
-            
-            
-            
-            
-            
             
             var a = face.vertices[0]
             var b = face.vertices[1]
             var c = face.vertices[2]
 
-
-            //divide x,y,u,v by z
-            //prop t from 0 to 1 to tell hwo far along perspective line you are
             var ascr = this.screentransform(a.pos(mesh).c())
             var bscr = this.screentransform(b.pos(mesh).c())
             var cscr = this.screentransform(c.pos(mesh).c())
@@ -62,9 +52,9 @@ class Pipeline{
     screentransform(pos:Vector):Vector{
         var screensize = new Vector(800,400)
         var ratio = screensize.y / screensize.x
-        var x = ((pos.x + 1) * (screensize.x / 2)) * ratio + screensize.x * ratio * 0.5
-        var y = (-pos.y + 1) * (screensize.y / 2)
-        pos.x = x
+        var x = ((pos.x / pos.z + 1) * (screensize.x / 2)) * ratio + screensize.x * ratio * 0.5
+        var y = (-pos.y / pos.z + 1) * (screensize.y / 2)
+        pos.x = x 
         pos.y = y
         return pos
     }
@@ -78,12 +68,12 @@ class Pipeline{
         var top = vertices[0]
         var middleLeft = vertices[1]
         var bot = vertices[2]
-        var middleRight:Test = new Test(null,null)
+        var middleRight:Test = new Test(new Vector(0,0),[])
 
         var ratio = to(top.screenpos.y,middleLeft.screenpos.y) / to(top.screenpos.y,bot.screenpos.y)
         top.lerp3d(bot,ratio,middleRight)
 
-        if (middleLeft.screenpos.x > middleLeft.screenpos.x){
+        if (middleLeft.screenpos.x > middleRight.screenpos.x){
             var temp = middleLeft
             middleLeft = middleRight
             middleRight = temp
@@ -131,6 +121,17 @@ class Pipeline{
             buffer[i] = cb(arr[i],i)
         }
         return buffer
+    }
+
+    putPixelZTest(x:number,y:number,z:number,c:number[],gfx:Graphics){
+        if(this.depthbuffer[y][x] > z){
+            gfx.putPixel(x,y,c)
+            this.depthbuffer[y][x] = z
+        }
+    }
+
+    clearDepthBuffer(){
+        sz.loop2d(v => this.depthbuffer[v.y][v.x] = Number.MAX_SAFE_INTEGER)
     }
 
     

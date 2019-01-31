@@ -9,9 +9,9 @@
 /// <reference path="Image.ts" />
 var sz = new Vector(800,400)
 
-line3d(new Vector(0,0,100),new Vector(1,0,1), (a,b,t,p) => {
-    console.log(t,p)
-})
+// line3d(new Vector(0,0,100),new Vector(1,0,1), (a,b,t,p) => {
+//     console.log(t,p)
+// })
 
 async function start(){
 
@@ -21,23 +21,23 @@ async function start(){
     var canvas = crret.canvas
     var ctxt = crret.ctxt
     var gfx = new Graphics(ctxt)
-    var pipeline = new Pipeline()
-    var mesh = Mesh.cube()
+    var pipeline = new Pipeline(sz)
+    var mesh = Mesh.quad()
     
 
     var light = null
 
-    pipeline.shader = new Shader((v:number[],index:number,normal:Vector) => {
-        var color = image.getUV(v[6],v[7])
+    pipeline.shader = new Shader((v:Test,index:number,normal:Vector) => {
+        var color = image.getUV(v.vertex[6],v.vertex[7])
         
-        gfx.putPixel(v[0],v[1],color)
-        
+        pipeline.putPixelZTest(v.screenpos.x,v.screenpos.y,v.vertex[2],color,gfx)
     })
 
     // loop((dt) => {
         ctxt.clearRect(0,0,sz.x,sz.y)
+        pipeline.clearDepthBuffer()
         gfx.load()
-        // pipeline.draw(mesh)
+        pipeline.draw(mesh)
         gfx.flush()
     // })
 }
