@@ -9,7 +9,7 @@
 /// <reference path="Image.ts" />
 var sz = new Vector(800,400)
 
-line3d(new Vector(0,0,1),new Vector(1,0,2), (a,b,t,p) => {
+line3d(new Vector(0,0,100),new Vector(1,0,1), (a,b,t,p) => {
     console.log(t,p)
 })
 
@@ -44,18 +44,6 @@ async function start(){
 start()
 
 
-function line3d(a:Vector,b:Vector,cb:(a:Vector,b:Vector,l:number,p:number) => void){
-
-    for(var t = 0; t <= 1; t += 0.1){
-        var z = lerp(a.z, b.z, t)
-        var invz = lerp(1 / a.z, 1 / b.z, t)
-        var correctz = 1 / invz
-
-        var x = lerp(0, 1 / b.z, t) / invz
-        var cz2 = lerp(a.z,b.z,x)
-        var q = 0
-    }
-}
 
 //wat wil ik
 //ik wil van vec a naar vec b

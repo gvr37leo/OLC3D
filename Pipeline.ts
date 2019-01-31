@@ -42,16 +42,16 @@ class Pipeline{
 
             //divide x,y,u,v by z
             //prop t from 0 to 1 to tell hwo far along perspective line you are
-            var ascr = this.screentransform(a.toArray(mesh))
-            var bscr = this.screentransform(b.toArray(mesh))
-            var cscr = this.screentransform(c.toArray(mesh))
+            var ascr = this.screentransform(a.pos(mesh).c())
+            var bscr = this.screentransform(b.pos(mesh).c())
+            var cscr = this.screentransform(c.pos(mesh).c())
 
             var a2b = a.pos(mesh).to(b.pos(mesh))
             var a2c = a.pos(mesh).to(c.pos(mesh))
             var normal = a2b.cross(a2c).normalize();
             var cameraRay = this.cameraPos.to(a.pos(mesh))
             if(normal.dot(cameraRay) < 0){
-                this.triangle(ascr,bscr,cscr,mesh,v => {
+                this.triangle(new Test(ascr,a.toArray(mesh)),new Test(bscr,b.toArray(mesh)),new Test(cscr,c.toArray(mesh)),mesh,v => {
                     this.shader.process(v,i,normal)
                 })
             }
@@ -59,32 +59,31 @@ class Pipeline{
         }
     }
 
-    screentransform(pos:number[]):number[]{
+    screentransform(pos:Vector):Vector{
         var screensize = new Vector(800,400)
         var ratio = screensize.y / screensize.x
-        var x = ((pos[0] + 1) * (screensize.x / 2)) * ratio + screensize.x * ratio * 0.5
-        var y = (-pos[1] + 1) * (screensize.y / 2)
-        pos[0] = x
-        pos[1] = y
+        var x = ((pos.x + 1) * (screensize.x / 2)) * ratio + screensize.x * ratio * 0.5
+        var y = (-pos.y + 1) * (screensize.y / 2)
+        pos.x = x
+        pos.y = y
         return pos
     }
 
 
 
-    triangle(a:number[],b:number[],c:number[],mesh:Mesh,cb:(v:number[]) => void){
+    triangle(a:Test,b:Test,c:Test,mesh:Mesh,cb:(v:Test) => void){
         var vertices = [a,b,c]
-        sortby(vertices, v => v[1])
+        sortby(vertices, v => v.screenpos.y)
 
         var top = vertices[0]
         var middleLeft = vertices[1]
         var bot = vertices[2]
-        var middleRight:number[] = null
+        var middleRight:Test = new Test(null,null)
 
-        var ratio = to(top[1],middleLeft[1]) / to(top[1],bot[1])
-        var middleRight = top.slice()
-        Pipeline.maplerp(top,bot,middleRight,ratio)
+        var ratio = to(top.screenpos.y,middleLeft.screenpos.y) / to(top.screenpos.y,bot.screenpos.y)
+        top.lerp3d(bot,ratio,middleRight)
 
-        if (middleLeft[0] > middleRight[0]){
+        if (middleLeft.screenpos.x > middleLeft.screenpos.x){
             var temp = middleLeft
             middleLeft = middleRight
             middleRight = temp
@@ -97,28 +96,28 @@ class Pipeline{
     }
     
 
-    private walk(tl:number[],tr:number[],bl:number[],br:number[],mesh:Mesh,cb:(v:number[]) => void){
-        var lefttemp:number[] = new Array(tl.length)
-        var righttemp:number[] = new Array(tl.length)
-        var hortemp:number[] = new Array(tl.length)
+    private walk(tl:Test,tr:Test,bl:Test,br:Test,mesh:Mesh,cb:(v:Test) => void){
+        var lefttemp:Test = new Test(new Vector(0,0),new Array(tl.vertex.length))
+        var righttemp:Test = new Test(new Vector(0,0),new Array(tl.vertex.length))
+        var hortemp:Test = new Test(new Vector(0,0),new Array(tl.vertex.length))
 
         //crop y and then z coordinates of tl and bl
-        var distToPixelCenterY = to(tl[1], (Math.ceil(tl[1] - 0.5) + 0.5))
+        var distToPixelCenterY = to(tl.screenpos.y, (Math.ceil(tl.screenpos.y - 0.5) + 0.5))
         
 
-        for(var y = tl[1] + distToPixelCenterY; y < bl[1]; y++){
-            var ratioy = inverselerp(tl[1],bl[1],y)
-            Pipeline.maplerp(tl,bl,lefttemp,ratioy)
-            Pipeline.maplerp(tr,br,righttemp,ratioy)
-            lefttemp[1] = Math.floor(lefttemp[1])
-            righttemp[1] = Math.floor(righttemp[1])
+        for(var y = tl.screenpos.y + distToPixelCenterY; y < bl.screenpos.y; y++){
+            var ratioy = inverselerp(tl.screenpos.y,bl.screenpos.y,y)
+            tl.lerp3d(bl,ratioy,lefttemp)
+            tr.lerp3d(br,ratioy,righttemp)
+            lefttemp.screenpos.y = Math.floor(lefttemp.screenpos.y)
+            righttemp.screenpos.y = Math.floor(righttemp.screenpos.y)
 
             //crop x and then z coordinates of lefttemp and righttemp
-            var distToPixelCenterX = to(lefttemp[0], (Math.ceil(lefttemp[0] - 0.5) + 0.5))
-            for(var x = lefttemp[0] + distToPixelCenterX; x < righttemp[0]; x++){
-                var ratiox = inverselerp(lefttemp[0], righttemp[0], x)
-                Pipeline.maplerp(lefttemp,righttemp,hortemp,ratiox)
-                hortemp[0] = Math.floor(hortemp[0])
+            var distToPixelCenterX = to(lefttemp.screenpos.x, (Math.ceil(lefttemp.screenpos.x - 0.5) + 0.5))
+            for(var x = lefttemp.screenpos.x + distToPixelCenterX; x < righttemp.screenpos.x; x++){
+                var ratiox = inverselerp(lefttemp.screenpos.x, righttemp.screenpos.x, x)
+                lefttemp.lerp3d(righttemp,ratiox,hortemp)
+                hortemp.screenpos.x = Math.floor(hortemp.screenpos.x)
                 cb(hortemp)
             }
         }
@@ -135,4 +134,34 @@ class Pipeline{
     }
 
     
+}
+
+class Test{
+    
+    
+    constructor(public screenpos:Vector, public vertex:number[]){
+
+    }
+
+    lerp3d(other:Test,t:number,testOut:Test):void{
+        testOut.screenpos = this.screenpos.lerp(other.screenpos,t)
+        var invz = lerp(1 / this.vertex[2],1 / other.vertex[2],t)
+        var perspectiveCorrectedT = lerp(0,1 / other.vertex[2],t) / invz
+        Pipeline.maplerp(this.vertex,other.vertex,testOut.vertex,perspectiveCorrectedT)
+    }
+
+}
+
+
+function line3d(a:Vector,b:Vector,cb:(a:Vector,b:Vector,l:number,p:number) => void){
+
+    for(var t = 0; t <= 1; t += 0.1){
+        var z = lerp(a.z, b.z, t)
+        var invz = lerp(1 / a.z, 1 / b.z, t)
+        var correctz = 1 / invz
+
+        var x = lerp(0, 1 / b.z, t) / invz
+        var cz2 = lerp(a.z,b.z,x)
+        var q = 0
+    }
 }

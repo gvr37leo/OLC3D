@@ -6,7 +6,7 @@ class Shader{
     //lights
     //specularmap
 
-    constructor(public process:(vertex:number[],index:number,normal:Vector) => void){
+    constructor(public process:(vertex:Test,index:number,normal:Vector) => void){
 
     }
 
