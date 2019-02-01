@@ -10,6 +10,15 @@ class Mesh{
 
     }
 
+    c(){
+        var copy = new Mesh()
+        copy.faces = this.faces
+        copy.vertices = this.vertices.map(v => v.c())
+        copy.normals = this.normals.map(v => v.c())
+        copy.uvs = this.uvs.map(v => v.c())
+        return copy;
+    }
+
     static loadObj(filePath:string):Mesh{
         var file:string
         var mesh = new Mesh()

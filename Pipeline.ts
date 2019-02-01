@@ -4,8 +4,8 @@ class Pipeline{
     cameraPos:Vector = new Vector(0,0,0)
     cameraDir:Vector = new Vector(0,0,1)
     cameraUp:Vector = new Vector(0,1,0)
-    worldMatrix:Matrix
-    cameraMatrix:Matrix
+    worldMatrix:Matrix = Matrix.identity()
+    cameraMatrix:Matrix = Matrix.identity()
     shader:Shader
 
     constructor(public sz:Vector){
@@ -13,15 +13,8 @@ class Pipeline{
     }
 
     draw(mesh:Mesh){
+        mesh = mesh.c()
 
-        var mattrans = Matrix.translate(new Vector(0,0,3))
-        var matrotx = Matrix.rotx(1.3)
-        var matroty = Matrix.roty(0)
-        var matrotz = Matrix.rotz(0)
-        var matScale = Matrix.scale(new Vector(1,1,1))
-        this.worldMatrix = Matrix.pipeMatrices([matrotx,matroty,matrotz,matScale,mattrans])
-        this.cameraMatrix = Matrix.lookAt(this.cameraPos,this.cameraPos.c().add(this.cameraDir),this.cameraUp)
-        this.cameraMatrix.mathInverse()
         mesh.vertices.forEach(this.worldMatrix.mxv.bind(this.worldMatrix))
         mesh.vertices.forEach(this.cameraMatrix.mxv.bind(this.cameraMatrix))
 

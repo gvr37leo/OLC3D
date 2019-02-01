@@ -33,13 +33,29 @@ async function start(){
         pipeline.putPixelZTest(v.screenpos.x,v.screenpos.y,v.vertex[2],color,gfx)
     })
 
-    // loop((dt) => {
+    
+    var rotx = 0
+    loop((dt) => {
+        dt /= 1000
+        rotx += dt
+        console.log(dt)
+
+
+        var mattrans = Matrix.translate(new Vector(0,0,2))
+        var matrotx = Matrix.rotx(rotx)
+        var matroty = Matrix.roty(0)
+        var matrotz = Matrix.rotz(0)
+        var matScale = Matrix.scale(new Vector(1,1,1))
+        pipeline.worldMatrix = Matrix.pipeMatrices([matrotx,matroty,matrotz,matScale,mattrans])
+        pipeline.cameraMatrix = Matrix.lookAt(pipeline.cameraPos,pipeline.cameraPos.c().add(pipeline.cameraDir),pipeline.cameraUp)
+        pipeline.cameraMatrix = pipeline.cameraMatrix.mathInverse()
+
         ctxt.clearRect(0,0,sz.x,sz.y)
         pipeline.clearDepthBuffer()
         gfx.load()
         pipeline.draw(mesh)
         gfx.flush()
-    // })
+    })
 }
 start()
 
