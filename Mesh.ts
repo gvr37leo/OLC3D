@@ -131,7 +131,7 @@ class Mesh{
             new Vector(0,0,-1)
         ]
         cube.faces = [
-            new Face([
+            new Face([//front
                 new Vertex(0,0,0),
                 new Vertex(1,1,0),
                 new Vertex(3,3,0),
@@ -142,59 +142,59 @@ class Mesh{
                 new Vertex(3,3,0),
             ]),
 
-            new Face([
-                new Vertex(1,1,0),
-                new Vertex(6,6,0),
-                new Vertex(2,2,0),
+            new Face([//right
+                new Vertex(1,0,0),
+                new Vertex(6,2,0),
+                new Vertex(2,3,0),
             ]),
             new Face([
-                new Vertex(1,1,0),
-                new Vertex(5,5,0),
-                new Vertex(6,6,0),
-            ]),
-
-            new Face([
-                new Vertex(5,5,0),
-                new Vertex(4,4,0),
-                new Vertex(6,6,0),
-            ]),
-            new Face([
-                new Vertex(4,4,0),
-                new Vertex(7,7,0),
-                new Vertex(6,6,0),
+                new Vertex(1,0,0),
+                new Vertex(5,1,0),
+                new Vertex(6,2,0),
             ]),
 
+            new Face([//back
+                new Vertex(5,0,0),
+                new Vertex(4,1,0),
+                new Vertex(6,3,0),
+            ]),
             new Face([
-                new Vertex(4,4,0),
+                new Vertex(4,1,0),
+                new Vertex(7,2,0),
+                new Vertex(6,3,0),
+            ]),
+
+            new Face([//left
+                new Vertex(4,0,0),
+                new Vertex(0,1,0),
+                new Vertex(3,2,0),
+            ]),
+            new Face([
+                new Vertex(4,0,0),
+                new Vertex(3,2,0),
+                new Vertex(7,3,0),
+            ]),
+
+            new Face([//top
                 new Vertex(0,0,0),
-                new Vertex(3,3,0),
+                new Vertex(4,1,0),
+                new Vertex(1,3,0),
             ]),
             new Face([
-                new Vertex(4,4,0),
-                new Vertex(3,3,0),
-                new Vertex(7,7,0),
-            ]),
-
-            new Face([
-                new Vertex(0,0,0),
-                new Vertex(4,4,0),
-                new Vertex(1,1,0),
-            ]),
-            new Face([
-                new Vertex(4,4,0),
-                new Vertex(5,5,0),
-                new Vertex(1,1,0),
+                new Vertex(4,1,0),
+                new Vertex(5,2,0),
+                new Vertex(1,3,0),
             ]),
 
-            new Face([
-                new Vertex(3,3,0),
-                new Vertex(6,6,0),
-                new Vertex(7,7,0),
+            new Face([//bot
+                new Vertex(3,0,0),
+                new Vertex(6,2,0),
+                new Vertex(7,3,0),
             ]),
             new Face([
-                new Vertex(3,3,0),
-                new Vertex(2,2,0),
-                new Vertex(6,6,0),
+                new Vertex(3,0,0),
+                new Vertex(2,1,0),
+                new Vertex(6,2,0),
             ]),
             
         ]

@@ -22,7 +22,7 @@ async function start(){
     var ctxt = crret.ctxt
     var gfx = new Graphics(ctxt)
     var pipeline = new Pipeline(sz)
-    var mesh = Mesh.quad()
+    var mesh = Mesh.cube()
     
 
     var light = null
@@ -34,16 +34,29 @@ async function start(){
     })
 
     
-    var rotx = 0
+    var xrot = 0
+    var yrot = 0
+    var rotspeed = 1
     loop((dt) => {
         dt /= 1000
-        rotx += dt
         console.log(dt)
 
+        if(keys[87]){
+            xrot += dt * rotspeed
+        }
+        if(keys[83]){
+            xrot -= dt * rotspeed
+        }
+        if(keys[65]){
+            yrot += dt * rotspeed
+        }
+        if(keys[68]){
+            yrot -= dt * rotspeed
+        }
 
-        var mattrans = Matrix.translate(new Vector(0,0,2))
-        var matrotx = Matrix.rotx(rotx)
-        var matroty = Matrix.roty(0)
+        var mattrans = Matrix.translate(new Vector(0,0,6))
+        var matrotx = Matrix.rotx(xrot)
+        var matroty = Matrix.roty(yrot)
         var matrotz = Matrix.rotz(0)
         var matScale = Matrix.scale(new Vector(1,1,1))
         pipeline.worldMatrix = Matrix.pipeMatrices([matrotx,matroty,matrotz,matScale,mattrans])
