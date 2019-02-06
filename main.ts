@@ -41,18 +41,7 @@ async function start(){
         dt /= 1000
         console.log(dt)
 
-        if(keys[87]){
-            xrot += dt * rotspeed
-        }
-        if(keys[83]){
-            xrot -= dt * rotspeed
-        }
-        if(keys[65]){
-            yrot += dt * rotspeed
-        }
-        if(keys[68]){
-            yrot -= dt * rotspeed
-        }
+        
 
         var mattrans = Matrix.translate(new Vector(0,0,6))
         var matrotx = Matrix.rotx(xrot)
